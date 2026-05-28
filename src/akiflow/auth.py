@@ -16,7 +16,6 @@ from .exceptions import AuthError
 WEB_BASE = "https://web.akiflow.com"
 DEFAULT_HEADERS = {
     "Akiflow-Platform": "web",
-    "Akiflow-Version": "2.69.3",
 }
 
 

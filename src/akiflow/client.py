@@ -109,7 +109,6 @@ class Akiflow:
         return {
             "Authorization": f"Bearer {self._access_token}",
             "Akiflow-Platform": "web",
-            "Akiflow-Version": "2.69.3",
             "Akiflow-Client-Id": self._client_id,
             "Accept": "application/json",
             "Content-Type": "application/json",
