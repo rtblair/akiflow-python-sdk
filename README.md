@@ -15,6 +15,7 @@ This is an early proof of concept. Currently implemented:
 
 - **Tasks** — create, list, update, mark done, delete
 - **Labels** — create, list, update, delete, lookup by name
+- **Time slots** — list calendar blocks via Akiflow's incremental sync API
 
 Other Akiflow features are not yet covered.
 
@@ -106,6 +107,22 @@ label_id = client.label.get_id("Work")
 # Delete
 client.label.delete(label_id)
 ```
+
+### Time slots
+
+```python
+# List the first page of calendar time slots
+page = client.time_slot.list()
+for slot in page["data"]:
+    print(slot["title"], slot["start_time"], slot["end_time"])
+
+# Fetch all pages using Akiflow's sync-token cursor
+slots = client.time_slot.all()
+```
+
+Time slot read support uses Akiflow's undocumented internal endpoint
+`GET /v5/time_slots`. Mutating time slots is intentionally not exposed until
+the write contract is verified.
 
 ## Debugging
 

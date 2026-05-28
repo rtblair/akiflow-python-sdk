@@ -68,5 +68,15 @@ from .client import Akiflow
 from .exceptions import AkiflowError, APIError, AuthError, TokenExpiredError
 from .label import Label
 from .task import Task
+from .time_slot import TimeSlot
 
-__all__ = ["Akiflow", "Label", "Task", "AkiflowError", "APIError", "AuthError", "TokenExpiredError"]
+__all__ = [
+    "Akiflow",
+    "Label",
+    "Task",
+    "TimeSlot",
+    "AkiflowError",
+    "APIError",
+    "AuthError",
+    "TokenExpiredError",
+]

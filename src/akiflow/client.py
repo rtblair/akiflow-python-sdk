@@ -12,6 +12,7 @@ from .auth import interactive_login, refresh_access_token
 from .exceptions import APIError, TokenExpiredError
 from .label import Label
 from .task import Task
+from .time_slot import TimeSlot
 
 API_BASE = "https://api.akiflow.com"
 
@@ -23,6 +24,7 @@ class Akiflow:
 
     - `client.task` — create, update, delete, and list tasks
     - `client.label` — create, update, delete, and list labels/projects
+    - `client.time_slot` — list calendar time slots with incremental sync
 
     There are three ways to authenticate:
 
@@ -100,6 +102,9 @@ class Akiflow:
         self.task = Task(self)
         """Task operations. See `akiflow.task.Task`."""
 
+        self.time_slot = TimeSlot(self)
+        """Time slot operations. See `akiflow.time_slot.TimeSlot`."""
+
     def _auth_headers(self) -> dict[str, str]:
         return {
             "Authorization": f"Bearer {self._access_token}",
@@ -163,6 +168,11 @@ class Akiflow:
 
     def _patch(self, path: str, **kwargs: Any) -> dict:
         return self._request("PATCH", path, **kwargs)
+
+    @property
+    def client_id(self) -> str:
+        """Akiflow client UUID sent with API requests."""
+        return self._client_id
 
     @property
     def access_token(self) -> str | None:

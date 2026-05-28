@@ -198,3 +198,62 @@ def test_label_lifecycle_with_task_assignment():
     assert done["done"] is True
     assert renamed["title"] == "sdk_test_renamed"
     assert deleted["deleted_at"]
+
+
+def test_time_slot_list_and_all_pages():
+    requests: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        requests.append(request)
+        assert request.method == "GET"
+        assert request.url.path == "/v5/time_slots"
+        assert request.url.params.get("limit") == "2"
+
+        if request.url.params.get("sync_token") is None:
+            return _json_response(
+                {
+                    "data": [
+                        {
+                            "id": "slot-1",
+                            "calendar_id": "cal-1",
+                            "title": "Deep work",
+                            "status": "confirmed",
+                            "start_time": "2026-03-27T09:00:00.000Z",
+                            "end_time": "2026-03-27T10:00:00.000Z",
+                            "start_datetime_tz": "America/New_York",
+                            "deleted_at": None,
+                        }
+                    ],
+                    "sync_token": "cursor-1",
+                    "has_next_page": True,
+                }
+            )
+
+        assert request.url.params.get("sync_token") == "cursor-1"
+        return _json_response(
+            {
+                "data": [
+                    {
+                        "id": "slot-2",
+                        "calendar_id": "cal-1",
+                        "title": "Calls",
+                        "status": "tentative",
+                        "start_time": "2026-03-27T10:00:00.000Z",
+                        "end_time": "2026-03-27T11:00:00.000Z",
+                        "start_datetime_tz": "America/New_York",
+                        "deleted_at": None,
+                    }
+                ],
+                "sync_token": "cursor-2",
+                "has_next_page": False,
+            }
+        )
+
+    client = _make_client(handler, access_token="access-token", refresh_token="refresh-token")
+
+    first_page = client.time_slot.list(limit=2)
+    all_slots = client.time_slot.all(limit=2)
+
+    assert first_page["data"][0]["id"] == "slot-1"
+    assert [slot["id"] for slot in all_slots] == ["slot-1", "slot-2"]
+    assert len(requests) == 3
